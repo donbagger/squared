@@ -1,4 +1,6 @@
 import { handleWallCollision, normalizeRotationSpeed } from './Physics';
+import wawrzynImage from '/src/assets/wawrzyn.jpg';
+import mlodyImage from '/src/assets/mlody.jpg';
 
 export default class Box {
   constructor(x, y, size, color, speed, rotationSpeed) {
@@ -17,19 +19,23 @@ export default class Box {
     this.damageFlashTime = 0;
     this.isDead = false;
 
+    this.imageLoaded = false;
     this.image = new Image();
     
-    // Add loading state tracking
     this.image.onload = () => {
-      console.log(`Image loaded for ${color} box`);
       this.imageLoaded = true;
+      console.log(`${color} box image loaded successfully`);
     };
 
-    // Use the correct relative paths matching your project structure
+    this.image.onerror = (e) => {
+      console.error(`Failed to load ${color} box image:`, e);
+    };
+
+    // Set image source using imported assets
     if (color === 'blue') {
-      this.image.src = './src/assets/wawrzyn.jpg';
+      this.image.src = wawrzynImage;
     } else if (color === 'red') {
-      this.image.src = './src/assets/mlody.jpg';
+      this.image.src = mlodyImage;
     }
   }
 
@@ -102,8 +108,8 @@ export default class Box {
       this.damageFlashTime--;
     }
 
-    // Draw the image or fallback
-    if (this.image.complete && this.image.naturalHeight !== 0) {
+    // Only draw image if it's loaded
+    if (this.imageLoaded) {
       ctx.globalAlpha = 1;
       ctx.drawImage(
         this.image,
@@ -113,8 +119,7 @@ export default class Box {
         this.size
       );
     } else {
-      // Fallback to colored rectangle
-      ctx.globalAlpha = 1;
+      // Fallback to colored rectangle if image isn't loaded
       ctx.fillStyle = this.color;
       ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
     }

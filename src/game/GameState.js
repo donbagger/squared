@@ -1,6 +1,10 @@
 import { detectCollision, resolveCollision, detectSwordPickup } from './Physics';
 import Box from './Box';
 import Sword from './Sword';
+import wawrzynBg from '/src/assets/wawrzyn_bg.jpg';
+import mlodyBg from '/src/assets/mlody_bg.png';
+import wawrzynMusic from '/src/assets/wawrzyn.mp4';
+import mlodyMusic from '/src/assets/mlody.mp3';
 
 export default class GameState {
   constructor(canvasWidth, canvasHeight) {
@@ -12,13 +16,16 @@ export default class GameState {
     
     // Load background images
     this.blueBackground = new Image();
-    this.blueBackground.src = './src/assets/wawrzyn_bg.jpg';
+    this.blueBackground.src = wawrzynBg;
+    this.blueBackground.onload = () => console.log('Blue background loaded');
+    
     this.redBackground = new Image();
-    this.redBackground.src = './src/assets/mlody_bg.png';
+    this.redBackground.src = mlodyBg;
+    this.redBackground.onload = () => console.log('Red background loaded');
 
-    // Initialize audio
-    this.blueBGM = new Audio('./src/assets/wawrzyn.mp4');
-    this.redBGM = new Audio('./src/assets/mlody.mp3');
+    // Initialize audio with imported assets
+    this.blueBGM = new Audio(wawrzynMusic);
+    this.redBGM = new Audio(mlodyMusic);
     
     // Configure audio
     this.blueBGM.loop = true;
