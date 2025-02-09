@@ -20,27 +20,17 @@ export default class Box {
     this.imageLoaded = false;
     this.image = new Image();
     
-    // Use dynamic import for images
-    const loadImage = async () => {
-      try {
-        let imagePath;
-        if (color === 'blue') {
-          imagePath = await import('/src/assets/wawrzyn.jpg');
-        } else if (color === 'red') {
-          imagePath = await import('/src/assets/mlody.jpg');
-        }
-        this.image.src = imagePath.default;
-        
-        this.image.onload = () => {
-          this.imageLoaded = true;
-          console.log(`${color} box image loaded successfully`);
-        };
-      } catch (error) {
-        console.error(`Failed to load ${color} box image:`, error);
-      }
+    this.image.onload = () => {
+      this.imageLoaded = true;
+      console.log(`${color} box image loaded successfully`);
     };
 
-    loadImage();
+    // Use root-relative paths (from public folder)
+    if (color === 'blue') {
+      this.image.src = '/wawrzyn.jpg';  // No src/assets prefix
+    } else if (color === 'red') {
+      this.image.src = '/mlody.jpg';    // No src/assets prefix
+    }
   }
 
   // Get edge points for sword pickup detection

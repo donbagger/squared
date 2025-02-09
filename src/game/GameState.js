@@ -14,18 +14,18 @@ export default class GameState {
     const boxSize = 80;
     const swordSize = 48;
     
-    // Load background images
+    // Load background images with root-relative paths
     this.blueBackground = new Image();
-    this.blueBackground.src = wawrzynBg;
+    this.blueBackground.src = '/wawrzyn_bg.jpg';
     this.blueBackground.onload = () => console.log('Blue background loaded');
     
     this.redBackground = new Image();
-    this.redBackground.src = mlodyBg;
+    this.redBackground.src = '/mlody_bg.jpg';
     this.redBackground.onload = () => console.log('Red background loaded');
 
-    // Initialize audio with imported assets
-    this.blueBGM = new Audio(wawrzynMusic);
-    this.redBGM = new Audio(mlodyMusic);
+    // Initialize audio with root-relative paths
+    this.blueBGM = new Audio('/wawrzyn.mp3');
+    this.redBGM = new Audio('/mlody.mp3');
     
     // Configure audio
     this.blueBGM.loop = true;
