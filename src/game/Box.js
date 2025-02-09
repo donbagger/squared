@@ -1,6 +1,4 @@
 import { handleWallCollision, normalizeRotationSpeed } from './Physics';
-import wawrzynImage from '/src/assets/wawrzyn.jpg';
-import mlodyImage from '/src/assets/mlody.jpg';
 
 export default class Box {
   constructor(x, y, size, color, speed, rotationSpeed) {
@@ -22,21 +20,27 @@ export default class Box {
     this.imageLoaded = false;
     this.image = new Image();
     
-    this.image.onload = () => {
-      this.imageLoaded = true;
-      console.log(`${color} box image loaded successfully`);
+    // Use dynamic import for images
+    const loadImage = async () => {
+      try {
+        let imagePath;
+        if (color === 'blue') {
+          imagePath = await import('/src/assets/wawrzyn.jpg');
+        } else if (color === 'red') {
+          imagePath = await import('/src/assets/mlody.jpg');
+        }
+        this.image.src = imagePath.default;
+        
+        this.image.onload = () => {
+          this.imageLoaded = true;
+          console.log(`${color} box image loaded successfully`);
+        };
+      } catch (error) {
+        console.error(`Failed to load ${color} box image:`, error);
+      }
     };
 
-    this.image.onerror = (e) => {
-      console.error(`Failed to load ${color} box image:`, e);
-    };
-
-    // Set image source using imported assets
-    if (color === 'blue') {
-      this.image.src = wawrzynImage;
-    } else if (color === 'red') {
-      this.image.src = mlodyImage;
-    }
+    loadImage();
   }
 
   // Get edge points for sword pickup detection
@@ -108,18 +112,24 @@ export default class Box {
       this.damageFlashTime--;
     }
 
-    // Only draw image if it's loaded
-    if (this.imageLoaded) {
+    // Draw the box
+    if (this.imageLoaded && this.image.complete) {
       ctx.globalAlpha = 1;
-      ctx.drawImage(
-        this.image,
-        -this.size / 2,
-        -this.size / 2,
-        this.size,
-        this.size
-      );
+      try {
+        ctx.drawImage(
+          this.image,
+          -this.size / 2,
+          -this.size / 2,
+          this.size,
+          this.size
+        );
+      } catch (error) {
+        // Fallback to colored rectangle if drawing fails
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+      }
     } else {
-      // Fallback to colored rectangle if image isn't loaded
+      // Fallback while loading
       ctx.fillStyle = this.color;
       ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
     }
